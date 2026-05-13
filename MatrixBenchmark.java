@@ -3,7 +3,7 @@ import java.io.*;
 
 public class MatrixBenchmark {
 
-    static final String FILE_PATH = "datasets/valid_xxlarge.txt"; // TEST ETMEK ICIN BURAYI DEGISTIR
+    static final String FILE_PATH = "datasets/invalid_dimension_1.txt"; // TEST ETMEK ICIN BURAYI DEGISTIR
 
     // ===================== DOSYA OKUMA VE DEMO =====================
 

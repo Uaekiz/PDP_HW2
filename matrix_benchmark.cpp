@@ -208,7 +208,7 @@ void benchmarkVector(int rows, int cols, int p, bool useFunction) {
 // ===================== MAIN =====================
 
 int main() {
-    string FILE_PATH = "datasets/valid_xxlarge.txt"; // TEST ETMEK ICIN BURAYI DEGISTIR
+    string FILE_PATH = "datasets/invalid_dimension_1.txt"; // TEST ETMEK ICIN BURAYI DEGISTIR
     
     runFileDemo(FILE_PATH);
     cout << endl;

@@ -3,7 +3,7 @@ import java.io.*;
 
 public class MatrixBenchmark {
 
-    static final String FILE_PATH = "datasets/invalid_dimension_1.txt"; // TEST ETMEK ICIN BURAYI DEGISTIR
+    static final String FILE_PATH = "datasets/valid_xxlarge.txt"; // TEST ETMEK ICIN BURAYI DEGISTIR
 
     // ===================== DOSYA OKUMA VE DEMO =====================
 
@@ -62,6 +62,9 @@ public class MatrixBenchmark {
                 throw new Exception("Hata: Carpim icin matris boyutlari uyumsuz (m != p).");
             }
 
+            // Sure olcumu baslatiliyor
+            long start = System.nanoTime();
+
             int[][] C = new int[n][q];
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < q; j++) {
@@ -70,8 +73,16 @@ public class MatrixBenchmark {
                     }
                 }
             }
+
+            // Sure olcumu bitiriliyor
+            long end = System.nanoTime();
+            double durationMs = (end - start) / 1_000_000.0;
+
             System.out.println("Basarili: Dosya okundu ve matrisler basariyla carpildi.");
+            System.out.println("Sonuc Matrisi Boyutu: " + n + "x" + q);
+            System.out.printf("Carpim Suresi: %.3f ms%n", durationMs);
             return true;
+
         } catch (FileNotFoundException e) {
             System.out.println("Hata: Dosya bulunamadi veya acilamadi.");
             return false;
@@ -83,7 +94,7 @@ public class MatrixBenchmark {
     }
 
     // ===================== GENERATORS =====================
-    // (Buralar ayni kaliyor)
+    
     static int[][] generateArrayMatrix(int rows, int cols) {
         Random rand = new Random();
         int[][] matrix = new int[rows][cols];
@@ -175,21 +186,20 @@ public class MatrixBenchmark {
     }
 
     public static void main(String[] args) {
-        boolean demoSuccess = runFileDemo(FILE_PATH);
+        runFileDemo(FILE_PATH);
         System.out.println();
 
-        if (!demoSuccess) {
-            Scanner scanner = new Scanner(System.in);
-            System.out.print("Dosya okuma basarisiz oldu. Benchmark testlerine devam etmek istiyor musunuz? (E/H): ");
-            String choice = scanner.nextLine();
-            if (!choice.equalsIgnoreCase("e")) {
-                System.out.println("Program kullanici tarafindan sonlandirildi.");
-                scanner.close();
-                return;
-            }
-            System.out.println();
+        // Basarili/Basarisiz fark etmeksizin her durumda sorar
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Demo asamasi tamamlandi. Benchmark testlerine gecmek istiyor musunuz? (E/H): ");
+        String choice = scanner.nextLine();
+        if (!choice.equalsIgnoreCase("e")) {
+            System.out.println("Program kullanici tarafindan sonlandirildi.");
             scanner.close();
+            return;
         }
+        System.out.println();
+        scanner.close();
 
         System.out.println("=== BENCHMARK ASAMASI ===");
         System.out.println("Language | Implementation | Computation Type | Size | Avg. Time (ms)");

@@ -44,7 +44,6 @@ vector<vector<int>> readMatrix(ifstream& file) {
     return matrix;
 }
 
-// Donus tipi bool yapildi (Basarili ise true, hata varsa false)
 bool runFileDemo(const string& filepath) {
     cout << "=== DEMO ASAMASI (DOSYA OKUMA) ===" << endl;
     cout << "Okunacak Dosya: " << filepath << endl;
@@ -68,6 +67,9 @@ bool runFileDemo(const string& filepath) {
             throw runtime_error("Hata: Carpim icin matris boyutlari uyumsuz (m != p).");
         }
 
+        // Sure olcumu baslatiliyor
+        auto start = high_resolution_clock::now();
+
         vector<vector<int>> C(n, vector<int>(q, 0));
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < q; j++) {
@@ -76,7 +78,16 @@ bool runFileDemo(const string& filepath) {
                 }
             }
         }
+
+       // Sure olcumu bitiriliyor
+        auto stop = high_resolution_clock::now();
+        // Degisken adini duration yerine carpimSuresiMs yaptik ve std::milli kullandik
+        double carpimSuresiMs = std::chrono::duration<double, std::milli>(stop - start).count();
+
         cout << "Basarili: Dosya okundu ve matrisler basariyla carpildi." << endl;
+        cout << "Sonuc Matrisi Boyutu: " << n << "x" << q << endl;
+        cout << "Carpim Suresi: " << fixed << setprecision(3) << carpimSuresiMs << " ms" << endl;
+        
         file.close();
         return true;
     } 
@@ -165,7 +176,7 @@ void benchmarkDynamic(int rows, int cols, int p, bool useFunction) {
         if (useFunction) multiplyDynamicFunction(A, B, C, rows, cols, p);
         else multiplyDynamicDirect(A, B, C, rows, cols, p);
         auto stop = high_resolution_clock::now();
-        total += duration<double, milli>(stop - start).count();
+        total += std::chrono::duration<double, std::milli>(stop - start).count();
     }
     
     cout << left << setw(10) << "C++" << setw(20) << "Dynamic Array" << setw(20) << (useFunction ? "Function Call" : "Direct")
@@ -187,7 +198,7 @@ void benchmarkVector(int rows, int cols, int p, bool useFunction) {
         if (useFunction) multiplyVectorFunction(A, B, C, rows, cols, p);
         else multiplyVectorDirect(A, B, C, rows, cols, p);
         auto stop = high_resolution_clock::now();
-        total += duration<double, milli>(stop - start).count();
+        total += std::chrono::duration<double, std::milli>(stop - start).count();
     }
     
     cout << left << setw(10) << "C++" << setw(20) << "Vector" << setw(20) << (useFunction ? "Function Call" : "Direct")
@@ -197,22 +208,20 @@ void benchmarkVector(int rows, int cols, int p, bool useFunction) {
 // ===================== MAIN =====================
 
 int main() {
-    string FILE_PATH = "datasets/invalid_dimension_1.txt"; // TEST ETMEK ICIN BURAYI DEGISTIR
+    string FILE_PATH = "datasets/valid_xxlarge.txt"; // TEST ETMEK ICIN BURAYI DEGISTIR
     
-    bool demoSuccess = runFileDemo(FILE_PATH);
+    runFileDemo(FILE_PATH);
     cout << endl;
 
-    // Hata varsa kullaniciya sor
-    if (!demoSuccess) {
-        cout << "Dosya okuma basarisiz oldu. Benchmark testlerine devam etmek istiyor musunuz? (E/H): ";
-        char choice;
-        cin >> choice;
-        if (choice != 'E' && choice != 'e') {
-            cout << "Program kullanici tarafindan sonlandirildi." << endl;
-            return 0;
-        }
-        cout << endl;
+    // Basarili/Basarisiz fark etmeksizin her durumda sorar
+    cout << "Demo asamasi tamamlandi. Benchmark testlerine gecmek istiyor musunuz? (E/H): ";
+    char choice;
+    cin >> choice;
+    if (choice != 'E' && choice != 'e') {
+        cout << "Program kullanici tarafindan sonlandirildi." << endl;
+        return 0;
     }
+    cout << endl;
 
     cout << "=== BENCHMARK ASAMASI ===" << endl;
     cout << "Language | Implementation | Computation Type | Size | Avg. Time (ms)" << endl;

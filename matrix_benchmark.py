@@ -2,7 +2,7 @@ import random
 import time
 import os
 
-FILE_PATH = "datasets/invalid_dimension_1.txt" # TEST ETMEK ICIN BURAYI DEGISTIR
+FILE_PATH = "datasets/valid_xxlarge.txt" # TEST ETMEK ICIN BURAYI DEGISTIR
 
 # ===================== DOSYA OKUMA VE DEMO =====================
 
@@ -63,8 +63,18 @@ def run_file_demo(filepath):
         if m != p:
             raise ValueError("Hata: Carpim icin matris boyutlari uyumsuz (m != p).")
 
+        # Sure olcumu baslatiliyor
+        start = time.perf_counter()
+
         C = multiply_direct(A, B)
+
+        # Sure olcumu bitiriliyor
+        end = time.perf_counter()
+        duration_ms = (end - start) * 1000
+
         print("Basarili: Dosya okundu ve matrisler basariyla carpildi.")
+        print(f"Sonuc Matrisi Boyutu: {len(C)}x{len(C[0])}")
+        print(f"Carpim Suresi: {duration_ms:.3f} ms")
         return True
         
     except ValueError as e:
@@ -120,15 +130,15 @@ def benchmark(rows, cols, p, use_function):
 # ===================== MAIN =====================
 
 if __name__ == "__main__":
-    demo_success = run_file_demo(FILE_PATH)
+    run_file_demo(FILE_PATH)
     print()
 
-    if not demo_success:
-        choice = input("Dosya okuma basarisiz oldu. Benchmark testlerine devam etmek istiyor musunuz? (E/H): ")
-        if choice.lower() != 'e':
-            print("Program kullanici tarafindan sonlandirildi.")
-            exit()
-        print()
+    # Basarili/Basarisiz fark etmeksizin her durumda sorar
+    choice = input("Demo asamasi tamamlandi. Benchmark testlerine gecmek istiyor musunuz? (E/H): ")
+    if choice.lower() != 'e':
+        print("Program kullanici tarafindan sonlandirildi.")
+        exit()
+    print()
 
     print("=== BENCHMARK ASAMASI ===")
     print("Language | Implementation | Computation Type | Size | Avg. Time (ms)")
